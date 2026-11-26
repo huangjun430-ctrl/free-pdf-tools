@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-title="jpgPageTitle" data-i18n-desc="jpgMetaDesc">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JPG to PDF — Free PDF Tools</title>
+  <meta name="description" content="Convert multiple JPG or PNG images into a single PDF with custom page size and ordering." />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </span>
+        <span data-i18n="siteName">Free PDF Tools</span>
+      </a>
+      <nav class="header-nav" aria-label="Tools">
+        <a class="nav-link" href="pdf-to-word.html" data-i18n="navPdfToWord">PDF to Word</a>
+        <a class="nav-link" href="pdf-to-excel.html" data-i18n="navPdfToExcel">PDF to Excel</a>
+        <a class="nav-link" href="merge-pdf.html" data-i18n="navMergePdf">Merge PDF</a>
+        <a class="nav-link" href="compress-pdf.html" data-i18n="navCompressPdf">Compress PDF</a>
+        <a class="nav-link" href="split-pdf.html" data-i18n="navSplitPdf">Split PDF</a>
+        <a class="nav-link active" href="jpg-to-pdf.html" data-i18n="navJpgToPdf">JPG to PDF</a>
+      </nav>
+      <button type="button" id="langToggleBtn" class="lang-btn" data-i18n="langToggle">中文</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tool-container">
+      <div class="breadcrumb">
+        <a href="index.html" data-i18n="backHome">← Back to all tools</a>
+      </div>
+
+      <section class="tool-header">
+        <h1 data-i18n="jpgTitle">JPG to PDF</h1>
+        <p data-i18n="jpgDesc">Combine multiple JPG / PNG images into a PDF with custom ordering, page size, and margins.</p>
+      </section>
+
+      <section class="workspace-card">
+        <div id="dropzone" class="dropzone" tabindex="0" role="button">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="dropzone-title" data-i18n="dropTitleMulti">Drag &amp; drop multiple files here, or click to select</p>
+          <p class="dropzone-hint" data-i18n="dropHintImages">Supports .jpg / .jpeg / .png images (select multiple at once)</p>
+          <button type="button" id="browseBtn" class="btn btn-secondary" data-i18n="chooseFilesBtn">Add More Files</button>
+          <input type="file" id="fileInput" class="file-input-hidden" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" multiple />
+        </div>
+
+        <div id="listSection" class="hidden">
+          <div class="list-toolbar">
+            <span class="form-help" data-i18n="dragReorderHint">Tip: Drag items or use the arrow buttons to reorder</span>
+            <button type="button" id="clearBtn" class="btn btn-secondary btn-sm" data-i18n="clearBtn">Clear</button>
+          </div>
+          <ul id="fileList" class="file-list"></ul>
+        </div>
+
+        <div class="options-panel">
+          <h2 class="options-title" data-i18n="optionsTitle">Options</h2>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label" for="optPageSize" data-i18n="jpgOptPageSize">Page size</label>
+              <select id="optPageSize" class="form-select">
+                <option value="a4" data-i18n="jpgSizeA4">A4 (210 × 297 mm)</option>
+                <option value="letter" data-i18n="jpgSizeLetter">Letter (215.9 × 279.4 mm)</option>
+                <option value="fit" data-i18n="jpgSizeFit">Fit to each image</option>
+              </select>
+            </div>
+            <div class="form-field" id="orientationField">
+              <label class="form-label" for="optOrientation" data-i18n="jpgOptOrientation">Orientation</label>
+              <select id="optOrientation" class="form-select">
+                <option value="auto" data-i18n="jpgOrientAuto">Auto (match image)</option>
+                <option value="portrait" data-i18n="jpgOrientPortrait">Portrait</option>
+                <option value="landscape" data-i18n="jpgOrientLandscape">Landscape</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="optMargin" data-i18n="jpgOptMargin">Margins</label>
+              <select id="optMargin" class="form-select">
+                <option value="0" data-i18n="jpgMarginNone">None (0 mm)</option>
+                <option value="10" selected data-i18n="jpgMarginSmall">Small (10 mm)</option>
+                <option value="20" data-i18n="jpgMarginNormal">Normal (20 mm)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-area">
+          <button type="button" id="processBtn" class="btn btn-primary btn-lg" disabled data-i18n="jpgBtn">Create PDF</button>
+        </div>
+
+        <div id="progressWrap" class="progress-wrap hidden">
+          <div class="progress-header">
+            <span id="progressText" data-i18n="progressWorking">Processing...</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="errorBox" class="alert alert-error hidden" role="alert"></div>
+
+        <div id="resultBox" class="result-box hidden">
+          <h2 class="result-title" data-i18n="resultTitle">Ready to Download</h2>
+          <p id="resultMeta" class="result-meta"></p>
+          <div class="result-actions">
+            <button type="button" id="downloadBtn" class="btn btn-success" data-i18n="jpgDownloadBtn">Download PDF</button>
+          </div>
+        </div>
+
+        <div class="local-notice" data-i18n="localNotice">🔒 Files are processed locally in your browser and are never uploaded to any server.</div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span data-i18n="footerPromise">🔒 Privacy Promise: All files are processed locally in your browser and never leave your device.</span>
+      <span data-i18n="footerNote">Pure static site · Zero uploads · Zero tracking</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="assets/i18n.js"></script>
+  <script src="assets/main.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("fileInput");
+      const browseBtn = document.getElementById("browseBtn");
+      const listSection = document.getElementById("listSection");
+      const fileListEl = document.getElementById("fileList");
+      const clearBtn = document.getElementById("clearBtn");
+      const optPageSize = document.getElementById("optPageSize");
+      const optOrientation = document.getElementById("optOrientation");
+      const orientationField = document.getElementById("orientationField");
+      const optMargin = document.getElementById("optMargin");
+      const processBtn = document.getElementById("processBtn");
+      const progress = PDFTools.createProgressUI(
+        document.getElementById("progressWrap"),
+        document.getElementById("progressFill"),
+        document.getElementById("progressText"),
+        document.getElementById("progressPct")
+      );
+      const errorBox = document.getElementById("errorBox");
+      const resultBox = document.getElementById("resultBox");
+      const resultMeta = document.getElementById("resultMeta");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      const items = []; // { file, dataUrl, width, height, rotation }
+      let outputBlob = null;
+      let outputFilename = "images.pdf";
+
+      function resetOutput() {
+        outputBlob = null;
+        PDFTools.hideEl(errorBox);
+        PDFTools.hideEl(resultBox);
+        progress.hide();
+      }
+
+      optPageSize.addEventListener("change", () => {
+        if (optPageSize.value === "fit") {
+          orientationField.classList.add("hidden");
+        } else {
+          orientationField.classList.remove("hidden");
+        }
+        resetOutput();
+      });
+
+      function loadImageInfo(dataUrl) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve({ img, width: img.naturalWidth, height: img.naturalHeight });
+          img.onerror = () => reject(new Error("Invalid image"));
+          img.src = dataUrl;
+        });
+      }
+
+      function renderList() {
+        fileListEl.innerHTML = "";
+        if (!items.length) {
+          PDFTools.hideEl(listSection);
+          processBtn.disabled = true;
+          return;
+        }
+        PDFTools.showEl(listSection);
+        processBtn.disabled = false;
+
+        items.forEach((item, index) => {
+          const li = document.createElement("li");
+          li.className = "file-item";
+
+          const left = document.createElement("div");
+          left.className = "file-item-left";
+
+          const badge = document.createElement("span");
+          badge.className = "file-index";
+          badge.textContent = String(index + 1);
+
+          const thumb = document.createElement("img");
+          thumb.className = "file-thumb";
+          thumb.src = item.dataUrl;
+          thumb.alt = item.file.name;
+          if (item.rotation) {
+            thumb.style.transform = "rotate(" + item.rotation + "deg)";
+          }
+
+          const info = document.createElement("div");
+          info.className = "file-item-info";
+
+          const name = document.createElement("div");
+          name.className = "file-item-name";
+          name.textContent = item.file.name;
+
+          const effectiveW = item.rotation % 180 === 0 ? item.width : item.height;
+          const effectiveH = item.rotation % 180 === 0 ? item.height : item.width;
+          const meta = document.createElement("div");
+          meta.className = "file-item-meta";
+          meta.textContent = effectiveW + " × " + effectiveH + " px · " + PDFTools.formatBytes(item.file.size);
+
+          info.appendChild(name);
+          info.appendChild(meta);
+          left.appendChild(badge);
+          left.appendChild(thumb);
+          left.appendChild(info);
+
+          const actions = document.createElement("div");
+          actions.className = "file-item-actions";
+
+          const rotBtn = document.createElement("button");
+          rotBtn.type = "button";
+          rotBtn.className = "btn btn-secondary btn-sm";
+          rotBtn.textContent = "↻ 90°";
+          rotBtn.title = PDFTools.t("rotateBtn");
+          rotBtn.addEventListener("click", () => {
+            item.rotation = (item.rotation + 90) % 360;
+            resetOutput();
+            renderList();
+          });
+
+          const upBtn = document.createElement("button");
+          upBtn.type = "button";
+          upBtn.className = "btn btn-secondary btn-icon";
+          upBtn.textContent = "↑";
+          upBtn.title = PDFTools.t("moveUpBtn");
+          upBtn.disabled = index === 0;
+          upBtn.addEventListener("click", () => {
+            if (index > 0) {
+              const tmp = items[index - 1];
+              items[index - 1] = items[index];
+              items[index] = tmp;
+              resetOutput();
+              renderList();
+            }
+          });
+
+          const downBtn = document.createElement("button");
+          downBtn.type = "button";
+          downBtn.className = "btn btn-secondary btn-icon";
+          downBtn.textContent = "↓";
+          downBtn.title = PDFTools.t("moveDownBtn");
+          downBtn.disabled = index === items.length - 1;
+          downBtn.addEventListener("click", () => {
+            if (index < items.length - 1) {
+              const tmp = items[index + 1];
+              items[index + 1] = items[index];
+              items[index] = tmp;
+              resetOutput();
+              renderList();
+            }
+          });
+
+          const rmBtn = document.createElement("button");
+          rmBtn.type = "button";
+          rmBtn.className = "btn btn-secondary btn-sm";
+          rmBtn.textContent = PDFTools.t("removeBtn");
+          rmBtn.addEventListener("click", () => {
+            items.splice(index, 1);
+            resetOutput();
+            renderList();
+          });
+
+          actions.appendChild(rotBtn);
+          actions.appendChild(upBtn);
+          actions.appendChild(downBtn);
+          actions.appendChild(rmBtn);
+          li.appendChild(left);
+          li.appendChild(actions);
+
+          PDFTools.attachDragReorder(li, index, items, () => {
+            resetOutput();
+            renderList();
+          });
+
+          fileListEl.appendChild(li);
+        });
+      }
+
+      PDFToolsI18n.onChange(renderList);
+
+      clearBtn.addEventListener("click", () => {
+        items.length = 0;
+        resetOutput();
+        renderList();
+      });
+
+      PDFTools.setupDropzone({
+        dropzone,
+        input: fileInput,
+        browseBtn,
+        multiple: true,
+        acceptType: "image",
+        onError(msg) {
+          resetOutput();
+          PDFTools.showAlert(errorBox, msg);
+        },
+        async onFiles(files) {
+          resetOutput();
+          for (const file of files) {
+            try {
+              const dataUrl = await PDFTools.readFileAsDataURL(file);
+              const info = await loadImageInfo(dataUrl);
+              items.push({
+                file,
+                dataUrl,
+                width: info.width,
+                height: info.height,
+                rotation: 0
+              });
+            } catch (err) {
+              PDFTools.showAlert(errorBox, PDFTools.t("errInvalidImage"));
+              break;
+            }
+          }
+          renderList();
+        }
+      });
+
+      async function normalizeImageToJpeg(item) {
+        const { img, width, height } = await loadImageInfo(item.dataUrl);
+        const rot = item.rotation || 0;
+        const swap = rot % 180 !== 0;
+        const outW = swap ? height : width;
+        const outH = swap ? width : height;
+
+        const canvas = document.createElement("canvas");
+        canvas.width = outW;
+        canvas.height = outH;
+        const ctx = canvas.getContext("2d", { alpha: false });
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, outW, outH);
+
+        ctx.save();
+        ctx.translate(outW / 2, outH / 2);
+        ctx.rotate((rot * Math.PI) / 180);
+        ctx.drawImage(img, -width / 2, -height / 2, width, height);
+        ctx.restore();
+
+        return {
+          jpegDataUrl: canvas.toDataURL("image/jpeg", 0.92),
+          width: outW,
+          height: outH
+        };
+      }
+
+      function getPageDimensionsMm(sizeKey, orientationKey, imgW, imgH, marginMm) {
+        if (sizeKey === "fit") {
+          const pxToMm = 25.4 / 96;
+          const w = Math.max(20, imgW * pxToMm) + marginMm * 2;
+          const h = Math.max(20, imgH * pxToMm) + marginMm * 2;
+          return {
+            w,
+            h,
+            orient: w >= h ? "l" : "p"
+          };
+        }
+
+        const base = sizeKey === "letter" ? { w: 215.9, h: 279.4 } : { w: 210, h: 297 };
+        let orient = "p";
+        if (orientationKey === "landscape") orient = "l";
+        else if (orientationKey === "portrait") orient = "p";
+        else orient = imgW > imgH ? "l" : "p";
+
+        return {
+          w: orient === "l" ? base.h : base.w,
+          h: orient === "l" ? base.w : base.h,
+          orient
+        };
+      }
+
+      processBtn.addEventListener("click", async () => {
+        resetOutput();
+        if (!items.length) {
+          PDFTools.showAlert(errorBox, PDFTools.t("jpgErrNoImages"));
+          return;
+        }
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          PDFTools.showAlert(errorBox, PDFTools.t("errLibMissing"));
+          return;
+        }
+
+        processBtn.disabled = true;
+
+        try {
+          const { jsPDF } = window.jspdf;
+          const sizeKey = optPageSize.value;
+          const orientKey = optOrientation.value;
+          const marginMm = Number(optMargin.value) || 0;
+
+          let doc = null;
+
+          for (let i = 0; i < items.length; i++) {
+            progress.show(((i + 0.5) / items.length) * 85, PDFTools.t("jpgProgressImg", {
+              current: i + 1,
+              total: items.length
+            }));
+            await PDFTools.yieldToUI();
+
+            const norm = await normalizeImageToJpeg(items[i]);
+            const pageSpec = getPageDimensionsMm(sizeKey, orientKey, norm.width, norm.height, marginMm);
+
+            if (i === 0) {
+              doc = new jsPDF({
+                orientation: pageSpec.orient,
+                unit: "mm",
+                format: [pageSpec.w, pageSpec.h],
+                compress: true
+              });
+            } else {
+              doc.addPage([pageSpec.w, pageSpec.h], pageSpec.orient);
+            }
+
+            const availW = Math.max(10, pageSpec.w - marginMm * 2);
+            const availH = Math.max(10, pageSpec.h - marginMm * 2);
+            const ratio = Math.min(availW / norm.width, availH / norm.height);
+            const drawW = norm.width * ratio;
+            const drawH = norm.height * ratio;
+            const x = (pageSpec.w - drawW) / 2;
+            const y = (pageSpec.h - drawH) / 2;
+
+            doc.addImage(norm.jpegDataUrl, "JPEG", x, y, drawW, drawH, undefined, "FAST");
+          }
+
+          progress.show(95, PDFTools.t("jpgProgressSave"));
+          await PDFTools.yieldToUI();
+
+          outputBlob = doc.output("blob");
+          outputFilename = items.length === 1
+            ? PDFTools.stripExtension(items[0].file.name) + ".pdf"
+            : "images.pdf";
+
+          progress.show(100, PDFTools.t("progressDone"));
+          resultMeta.textContent = PDFTools.t("jpgResultMeta", {
+            count: items.length,
+            size: PDFTools.formatBytes(outputBlob.size)
+          });
+          PDFTools.showEl(resultBox);
+        } catch (err) {
+          progress.hide();
+          PDFTools.showAlert(errorBox, PDFTools.t("errGeneric", { msg: err.message || err }));
+        } finally {
+          processBtn.disabled = items.length === 0;
+        }
+      });
+
+      downloadBtn.addEventListener("click", () => {
+        if (outputBlob) {
+          PDFTools.triggerDownload(outputBlob, outputFilename);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

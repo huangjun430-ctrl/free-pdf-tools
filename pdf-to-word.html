@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-title="wordPageTitle" data-i18n-desc="wordMetaDesc">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF to Word (.docx) — Free PDF Tools</title>
+  <meta name="description" content="Convert PDF text and basic paragraphs to an editable Word (.docx) document directly in your browser." />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </span>
+        <span data-i18n="siteName">Free PDF Tools</span>
+      </a>
+      <nav class="header-nav" aria-label="Tools">
+        <a class="nav-link active" href="pdf-to-word.html" data-i18n="navPdfToWord">PDF to Word</a>
+        <a class="nav-link" href="pdf-to-excel.html" data-i18n="navPdfToExcel">PDF to Excel</a>
+        <a class="nav-link" href="merge-pdf.html" data-i18n="navMergePdf">Merge PDF</a>
+        <a class="nav-link" href="compress-pdf.html" data-i18n="navCompressPdf">Compress PDF</a>
+        <a class="nav-link" href="split-pdf.html" data-i18n="navSplitPdf">Split PDF</a>
+        <a class="nav-link" href="jpg-to-pdf.html" data-i18n="navJpgToPdf">JPG to PDF</a>
+      </nav>
+      <button type="button" id="langToggleBtn" class="lang-btn" data-i18n="langToggle">中文</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tool-container">
+      <div class="breadcrumb">
+        <a href="index.html" data-i18n="backHome">← Back to all tools</a>
+      </div>
+
+      <section class="tool-header">
+        <h1 data-i18n="wordTitle">PDF to Word</h1>
+        <p data-i18n="wordDesc">Extract text from PDF into an editable .docx document (preserves text and basic paragraphs; complex layouts are simplified).</p>
+      </section>
+
+      <section class="workspace-card">
+        <div id="dropzone" class="dropzone" tabindex="0" role="button">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="dropzone-title" data-i18n="dropTitleSingle">Drag &amp; drop a file here, or click to select</p>
+          <p class="dropzone-hint" data-i18n="dropHintPdf">Supports .pdf files (up to 50 MB recommended for smooth browser processing)</p>
+          <button type="button" id="browseBtn" class="btn btn-secondary" data-i18n="chooseFileBtn">Select File</button>
+          <input type="file" id="fileInput" class="file-input-hidden" accept=".pdf,application/pdf" />
+        </div>
+
+        <div id="fileSummary" class="file-summary hidden">
+          <div class="file-summary-meta">
+            <div id="fileName" class="file-summary-name"></div>
+            <div id="fileMeta" class="file-summary-sub"></div>
+          </div>
+          <button type="button" id="clearBtn" class="btn btn-secondary btn-sm" data-i18n="clearBtn">Clear</button>
+        </div>
+
+        <div class="options-panel">
+          <h2 class="options-title" data-i18n="optionsTitle">Options</h2>
+          <div class="form-grid">
+            <div class="form-field full-width">
+              <label class="checkbox-row">
+                <input type="checkbox" id="optPageBreak" checked />
+                <span data-i18n="wordOptPageBreak">Insert page break between PDF pages</span>
+              </label>
+            </div>
+            <div class="form-field full-width">
+              <label class="checkbox-row">
+                <input type="checkbox" id="optMergeLines" checked />
+                <span data-i18n="wordOptMergeLines">Smartly merge wrapped lines into paragraphs</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-area">
+          <button type="button" id="processBtn" class="btn btn-primary btn-lg" disabled data-i18n="wordBtn">Convert to Word</button>
+        </div>
+
+        <div id="progressWrap" class="progress-wrap hidden">
+          <div class="progress-header">
+            <span id="progressText" data-i18n="progressWorking">Processing...</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="errorBox" class="alert alert-error hidden" role="alert"></div>
+
+        <div id="resultBox" class="result-box hidden">
+          <h2 class="result-title" data-i18n="resultTitle">Ready to Download</h2>
+          <p id="resultMeta" class="result-meta"></p>
+          <div class="result-actions">
+            <button type="button" id="downloadBtn" class="btn btn-success" data-i18n="wordDownloadBtn">Download Word (.docx)</button>
+          </div>
+          <div id="previewBox" class="preview-box hidden">
+            <pre id="previewText"></pre>
+          </div>
+        </div>
+
+        <div class="local-notice" data-i18n="localNotice">🔒 Files are processed locally in your browser and are never uploaded to any server.</div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span data-i18n="footerPromise">🔒 Privacy Promise: All files are processed locally in your browser and never leave your device.</span>
+      <span data-i18n="footerNote">Pure static site · Zero uploads · Zero tracking</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+  <script src="assets/i18n.js"></script>
+  <script src="assets/main.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("fileInput");
+      const browseBtn = document.getElementById("browseBtn");
+      const fileSummary = document.getElementById("fileSummary");
+      const fileNameEl = document.getElementById("fileName");
+      const fileMetaEl = document.getElementById("fileMeta");
+      const clearBtn = document.getElementById("clearBtn");
+      const optPageBreak = document.getElementById("optPageBreak");
+      const optMergeLines = document.getElementById("optMergeLines");
+      const processBtn = document.getElementById("processBtn");
+      const progress = PDFTools.createProgressUI(
+        document.getElementById("progressWrap"),
+        document.getElementById("progressFill"),
+        document.getElementById("progressText"),
+        document.getElementById("progressPct")
+      );
+      const errorBox = document.getElementById("errorBox");
+      const resultBox = document.getElementById("resultBox");
+      const resultMeta = document.getElementById("resultMeta");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const previewBox = document.getElementById("previewBox");
+      const previewText = document.getElementById("previewText");
+
+      let currentFile = null;
+      let currentBuffer = null;
+      let currentPageCount = 0;
+      let outputBlob = null;
+      let outputFilename = "converted.docx";
+
+      function resetOutput() {
+        outputBlob = null;
+        PDFTools.hideEl(errorBox);
+        PDFTools.hideEl(resultBox);
+        PDFTools.hideEl(previewBox);
+        progress.hide();
+      }
+
+      function clearSelection() {
+        currentFile = null;
+        currentBuffer = null;
+        currentPageCount = 0;
+        PDFTools.hideEl(fileSummary);
+        processBtn.disabled = true;
+        resetOutput();
+      }
+
+      function updateFileMeta() {
+        if (!currentFile) return;
+        fileMetaEl.textContent = PDFTools.t("fileInfoPages", {
+          pages: currentPageCount,
+          size: PDFTools.formatBytes(currentFile.size)
+        });
+      }
+
+      PDFToolsI18n.onChange(updateFileMeta);
+
+      PDFTools.setupDropzone({
+        dropzone,
+        input: fileInput,
+        browseBtn,
+        multiple: false,
+        acceptType: "pdf",
+        onError(msg) {
+          resetOutput();
+          PDFTools.showAlert(errorBox, msg);
+        },
+        async onFiles(files) {
+          resetOutput();
+          const file = files[0];
+          try {
+            const buffer = await PDFTools.readFileAsArrayBuffer(file);
+            const pdfDoc = await PDFTools.loadPdfJsDocument(buffer);
+            currentFile = file;
+            currentBuffer = buffer;
+            currentPageCount = pdfDoc.numPages;
+            await pdfDoc.destroy();
+
+            fileNameEl.textContent = file.name;
+            updateFileMeta();
+            PDFTools.showEl(fileSummary);
+            processBtn.disabled = false;
+          } catch (err) {
+            clearSelection();
+            PDFTools.showAlert(errorBox, PDFTools.classifyPdfError(err, file.name));
+          }
+        }
+      });
+
+      clearBtn.addEventListener("click", clearSelection);
+
+      function extractLinesFromTextContent(textContent) {
+        const items = (textContent.items || [])
+          .filter((item) => item && typeof item.str === "string" && item.str.trim().length > 0)
+          .map((item) => {
+            const tr = item.transform || [1, 0, 0, 12, 0, 0];
+            const fontSize = Math.max(Math.abs(tr[0]) || 0, Math.abs(tr[3]) || 0, item.height || 12);
+            return {
+              str: item.str,
+              x: tr[4],
+              y: tr[5],
+              width: item.width || 0,
+              fontSize
+            };
+          });
+
+        if (!items.length) return [];
+
+        // Sort top-to-bottom (higher y first in PDF coords), then left-to-right
+        items.sort((a, b) => {
+          if (Math.abs(b.y - a.y) > 2) return b.y - a.y;
+          return a.x - b.x;
+        });
+
+        const lines = [];
+        for (const item of items) {
+          const tol = Math.max(3, item.fontSize * 0.45);
+          let targetLine = null;
+          for (let i = lines.length - 1; i >= Math.max(0, lines.length - 5); i--) {
+            if (Math.abs(lines[i].y - item.y) <= tol) {
+              targetLine = lines[i];
+              break;
+            }
+          }
+          if (!targetLine) {
+            targetLine = { y: item.y, fontSize: item.fontSize, items: [item] };
+            lines.push(targetLine);
+          } else {
+            targetLine.items.push(item);
+            targetLine.fontSize = Math.max(targetLine.fontSize, item.fontSize);
+          }
+        }
+
+        lines.sort((a, b) => b.y - a.y);
+
+        return lines.map((line) => {
+          line.items.sort((a, b) => a.x - b.x);
+          let text = "";
+          let prevEnd = null;
+          for (const it of line.items) {
+            const trimmed = it.str;
+            if (prevEnd !== null) {
+              const gap = it.x - prevEnd;
+              if (gap > it.fontSize * 0.25 && !text.endsWith(" ") && !trimmed.startsWith(" ")) {
+                text += " ";
+              }
+            }
+            text += trimmed;
+            prevEnd = it.x + it.width;
+          }
+          return {
+            y: line.y,
+            fontSize: line.fontSize,
+            text: text.replace(/\s+/g, " ").trim()
+          };
+        }).filter((l) => l.text.length > 0);
+      }
+
+      function buildPageParagraphs(lines, medianFontSize, mergeLines) {
+        if (!lines.length) return [];
+        if (!mergeLines) {
+          return lines.map((l) => ({
+            text: l.text,
+            isHeading: l.fontSize >= medianFontSize * 1.28 && l.text.length <= 120
+          }));
+        }
+
+        const paragraphs = [];
+        let current = {
+          text: lines[0].text,
+          fontSize: lines[0].fontSize,
+          y: lines[0].y
+        };
+
+        for (let i = 1; i < lines.length; i++) {
+          const prev = lines[i - 1];
+          const cur = lines[i];
+          const verticalGap = prev.y - cur.y;
+          const sameSize = Math.abs(cur.fontSize - current.fontSize) <= 1.5;
+          const largeGap = verticalGap > Math.max(prev.fontSize, cur.fontSize) * 1.65;
+          const prevLooksComplete = /[.!?。！？:：]$/.test(prev.text) && prev.text.length < 70;
+          const isCurHeading = cur.fontSize >= medianFontSize * 1.28 && cur.text.length <= 120;
+          const isPrevHeading = current.fontSize >= medianFontSize * 1.28 && current.text.length <= 120;
+
+          if (!sameSize || largeGap || prevLooksComplete || isCurHeading || isPrevHeading) {
+            paragraphs.push({
+              text: current.text,
+              isHeading: isPrevHeading
+            });
+            current = { text: cur.text, fontSize: cur.fontSize, y: cur.y };
+          } else {
+            const needsSpace = !/[\u4e00-\u9fff]$/.test(current.text) && !/^[\u4e00-\u9fff]/.test(cur.text);
+            current.text += (needsSpace ? " " : "") + cur.text;
+            current.y = cur.y;
+          }
+        }
+
+        paragraphs.push({
+          text: current.text,
+          isHeading: current.fontSize >= medianFontSize * 1.28 && current.text.length <= 120
+        });
+
+        return paragraphs;
+      }
+
+      processBtn.addEventListener("click", async () => {
+        if (!currentBuffer || !currentFile) return;
+        if (!window.docx || !window.pdfjsLib) {
+          PDFTools.showAlert(errorBox, PDFTools.t("errLibMissing"));
+          return;
+        }
+
+        resetOutput();
+        processBtn.disabled = true;
+
+        try {
+          const pdfDoc = await PDFTools.loadPdfJsDocument(currentBuffer);
+          const total = pdfDoc.numPages;
+          const allPagesLines = [];
+          const fontSizes = [];
+          let totalChars = 0;
+
+          for (let pageNum = 1; pageNum <= total; pageNum++) {
+            progress.show((pageNum / total) * 75, PDFTools.t("wordProgressPage", { current: pageNum, total }));
+            await PDFTools.yieldToUI();
+
+            const page = await pdfDoc.getPage(pageNum);
+            const content = await page.getTextContent();
+            const lines = extractLinesFromTextContent(content);
+            for (const l of lines) {
+              fontSizes.push(l.fontSize);
+              totalChars += l.text.length;
+            }
+            allPagesLines.push(lines);
+          }
+
+          await pdfDoc.destroy();
+
+          if (totalChars === 0) {
+            progress.hide();
+            PDFTools.showAlert(errorBox, PDFTools.t("errNoTextScanned"));
+            processBtn.disabled = false;
+            return;
+          }
+
+          progress.show(85, PDFTools.t("wordProgressBuild"));
+          await PDFTools.yieldToUI();
+
+          fontSizes.sort((a, b) => a - b);
+          const medianFontSize = fontSizes[Math.floor(fontSizes.length / 2)] || 12;
+
+          const { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak } = window.docx;
+          const children = [];
+          const insertBreaks = optPageBreak.checked;
+          const mergeLines = optMergeLines.checked;
+          const previewLines = [];
+          let paragraphCount = 0;
+
+          allPagesLines.forEach((lines, idx) => {
+            const paras = buildPageParagraphs(lines, medianFontSize, mergeLines);
+            for (const p of paras) {
+              paragraphCount++;
+              if (previewLines.length < 30) previewLines.push(p.text);
+              children.push(
+                new Paragraph({
+                  heading: p.isHeading ? HeadingLevel.HEADING_2 : undefined,
+                  spacing: { after: 160 },
+                  children: [new TextRun({ text: p.text })]
+                })
+              );
+            }
+            if (insertBreaks && idx < allPagesLines.length - 1) {
+              children.push(new Paragraph({ children: [new PageBreak()] }));
+            }
+          });
+
+          const doc = new Document({
+            sections: [{ children }]
+          });
+
+          outputBlob = await Packer.toBlob(doc);
+          outputFilename = PDFTools.stripExtension(currentFile.name) + ".docx";
+
+          progress.show(100, PDFTools.t("progressDone"));
+          resultMeta.textContent = PDFTools.t("wordResultMeta", {
+            pages: total,
+            paragraphs: paragraphCount,
+            chars: totalChars
+          });
+          previewText.textContent = previewLines.join("\n\n");
+          PDFTools.showEl(previewBox);
+          PDFTools.showEl(resultBox);
+        } catch (err) {
+          progress.hide();
+          PDFTools.showAlert(errorBox, PDFTools.classifyPdfError(err, currentFile.name));
+        } finally {
+          processBtn.disabled = false;
+        }
+      });
+
+      downloadBtn.addEventListener("click", () => {
+        if (outputBlob) {
+          PDFTools.triggerDownload(outputBlob, outputFilename);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

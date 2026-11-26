@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-title="compressPageTitle" data-i18n-desc="compressMetaDesc">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compress PDF — Free PDF Tools</title>
+  <meta name="description" content="Compress PDF files locally in your browser with target size presets (100KB, 500KB, 1MB, or custom)." />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </span>
+        <span data-i18n="siteName">Free PDF Tools</span>
+      </a>
+      <nav class="header-nav" aria-label="Tools">
+        <a class="nav-link" href="pdf-to-word.html" data-i18n="navPdfToWord">PDF to Word</a>
+        <a class="nav-link" href="pdf-to-excel.html" data-i18n="navPdfToExcel">PDF to Excel</a>
+        <a class="nav-link" href="merge-pdf.html" data-i18n="navMergePdf">Merge PDF</a>
+        <a class="nav-link active" href="compress-pdf.html" data-i18n="navCompressPdf">Compress PDF</a>
+        <a class="nav-link" href="split-pdf.html" data-i18n="navSplitPdf">Split PDF</a>
+        <a class="nav-link" href="jpg-to-pdf.html" data-i18n="navJpgToPdf">JPG to PDF</a>
+      </nav>
+      <button type="button" id="langToggleBtn" class="lang-btn" data-i18n="langToggle">中文</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tool-container">
+      <div class="breadcrumb">
+        <a href="index.html" data-i18n="backHome">← Back to all tools</a>
+      </div>
+
+      <section class="tool-header">
+        <h1 data-i18n="compressTitle">Compress PDF</h1>
+        <p data-i18n="compressDesc">Shrink PDF file size toward a chosen target (100KB / 500KB / 1MB / custom; rasterizes pages when needed to reach strict targets).</p>
+      </section>
+
+      <section class="workspace-card">
+        <div id="dropzone" class="dropzone" tabindex="0" role="button">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="dropzone-title" data-i18n="dropTitleSingle">Drag &amp; drop a file here, or click to select</p>
+          <p class="dropzone-hint" data-i18n="dropHintPdf">Supports .pdf files (up to 50 MB recommended for smooth browser processing)</p>
+          <button type="button" id="browseBtn" class="btn btn-secondary" data-i18n="chooseFileBtn">Select File</button>
+          <input type="file" id="fileInput" class="file-input-hidden" accept=".pdf,application/pdf" />
+        </div>
+
+        <div id="fileSummary" class="file-summary hidden">
+          <div class="file-summary-meta">
+            <div id="fileName" class="file-summary-name"></div>
+            <div id="fileMeta" class="file-summary-sub"></div>
+          </div>
+          <button type="button" id="clearBtn" class="btn btn-secondary btn-sm" data-i18n="clearBtn">Clear</button>
+        </div>
+
+        <div class="options-panel">
+          <h2 class="options-title" data-i18n="optionsTitle">Options</h2>
+          <div class="form-grid">
+            <div class="form-field full-width">
+              <span class="form-label" data-i18n="compressOptTarget">Target file size</span>
+              <div class="segmented-group" id="presetGroup">
+                <button type="button" class="segmented-btn" data-kb="100">100 KB</button>
+                <button type="button" class="segmented-btn active" data-kb="500">500 KB</button>
+                <button type="button" class="segmented-btn" data-kb="1024">1 MB</button>
+                <button type="button" class="segmented-btn" data-kb="custom" data-i18n="compressOptCustomLabel">Custom target (KB)</button>
+              </div>
+            </div>
+            <div class="form-field hidden" id="customTargetField">
+              <label class="form-label" for="customTargetKb" data-i18n="compressOptCustomLabel">Custom target (KB)</label>
+              <input type="number" id="customTargetKb" class="form-input" min="20" step="10" value="300" data-i18n-placeholder="compressOptCustomPlaceholder" placeholder="e.g. 300" />
+            </div>
+            <div class="form-field full-width">
+              <p class="form-help" data-i18n="compressOptModeNote">Note: Lossless optimization runs first. If the file still exceeds the target size, pages are re-encoded as compressed JPEG images to fit.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-area">
+          <button type="button" id="processBtn" class="btn btn-primary btn-lg" disabled data-i18n="compressBtn">Compress PDF</button>
+        </div>
+
+        <div id="progressWrap" class="progress-wrap hidden">
+          <div class="progress-header">
+            <span id="progressText" data-i18n="progressWorking">Processing...</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="errorBox" class="alert alert-error hidden" role="alert"></div>
+        <div id="warnBox" class="alert alert-warning hidden"></div>
+
+        <div id="resultBox" class="result-box hidden">
+          <h2 class="result-title" data-i18n="resultTitle">Ready to Download</h2>
+          <p id="resultMeta" class="result-meta"></p>
+          <div class="result-actions">
+            <button type="button" id="downloadBtn" class="btn btn-success" data-i18n="compressDownloadBtn">Download Compressed PDF</button>
+          </div>
+        </div>
+
+        <div class="local-notice" data-i18n="localNotice">🔒 Files are processed locally in your browser and are never uploaded to any server.</div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span data-i18n="footerPromise">🔒 Privacy Promise: All files are processed locally in your browser and never leave your device.</span>
+      <span data-i18n="footerNote">Pure static site · Zero uploads · Zero tracking</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script src="assets/i18n.js"></script>
+  <script src="assets/main.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("fileInput");
+      const browseBtn = document.getElementById("browseBtn");
+      const fileSummary = document.getElementById("fileSummary");
+      const fileNameEl = document.getElementById("fileName");
+      const fileMetaEl = document.getElementById("fileMeta");
+      const clearBtn = document.getElementById("clearBtn");
+      const presetBtns = Array.from(document.querySelectorAll("#presetGroup .segmented-btn"));
+      const customTargetField = document.getElementById("customTargetField");
+      const customTargetKb = document.getElementById("customTargetKb");
+      const processBtn = document.getElementById("processBtn");
+      const progress = PDFTools.createProgressUI(
+        document.getElementById("progressWrap"),
+        document.getElementById("progressFill"),
+        document.getElementById("progressText"),
+        document.getElementById("progressPct")
+      );
+      const errorBox = document.getElementById("errorBox");
+      const warnBox = document.getElementById("warnBox");
+      const resultBox = document.getElementById("resultBox");
+      const resultMeta = document.getElementById("resultMeta");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      let selectedPreset = "500";
+      let currentFile = null;
+      let currentBuffer = null;
+      let currentPageCount = 0;
+      let outputBlob = null;
+      let outputFilename = "compressed.pdf";
+
+      function resetOutput() {
+        outputBlob = null;
+        PDFTools.hideEl(errorBox);
+        PDFTools.hideEl(warnBox);
+        PDFTools.hideEl(resultBox);
+        progress.hide();
+      }
+
+      function clearSelection() {
+        currentFile = null;
+        currentBuffer = null;
+        currentPageCount = 0;
+        PDFTools.hideEl(fileSummary);
+        processBtn.disabled = true;
+        resetOutput();
+      }
+
+      function updateFileMeta() {
+        if (!currentFile) return;
+        fileMetaEl.textContent = PDFTools.t("fileInfoPages", {
+          pages: currentPageCount,
+          size: PDFTools.formatBytes(currentFile.size)
+        });
+      }
+
+      PDFToolsI18n.onChange(updateFileMeta);
+
+      presetBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          presetBtns.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          selectedPreset = btn.dataset.kb;
+          if (selectedPreset === "custom") {
+            PDFTools.showEl(customTargetField);
+          } else {
+            PDFTools.hideEl(customTargetField);
+          }
+          resetOutput();
+        });
+      });
+
+      function getTargetBytes() {
+        const kb = selectedPreset === "custom" ? Number(customTargetKb.value) : Number(selectedPreset);
+        if (!Number.isFinite(kb) || kb < 20) return null;
+        return Math.round(kb * 1024);
+      }
+
+      PDFTools.setupDropzone({
+        dropzone,
+        input: fileInput,
+        browseBtn,
+        multiple: false,
+        acceptType: "pdf",
+        onError(msg) {
+          resetOutput();
+          PDFTools.showAlert(errorBox, msg);
+        },
+        async onFiles(files) {
+          resetOutput();
+          if (!window.PDFLib) {
+            PDFTools.showAlert(errorBox, PDFTools.t("errLibMissing"));
+            return;
+          }
+          const file = files[0];
+          try {
+            const buffer = await PDFTools.readFileAsArrayBuffer(file);
+            const doc = await window.PDFLib.PDFDocument.load(buffer);
+            currentFile = file;
+            currentBuffer = buffer;
+            currentPageCount = doc.getPageCount();
+            fileNameEl.textContent = file.name;
+            updateFileMeta();
+            PDFTools.showEl(fileSummary);
+            processBtn.disabled = false;
+          } catch (err) {
+            clearSelection();
+            PDFTools.showAlert(errorBox, PDFTools.classifyPdfError(err, file.name));
+          }
+        }
+      });
+
+      clearBtn.addEventListener("click", clearSelection);
+
+      async function canvasToJpgBytes(canvas, quality) {
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+        const buf = await blob.arrayBuffer();
+        return new Uint8Array(buf);
+      }
+
+      async function renderCompressedPdf(pdfJsDoc, scale, quality, attemptLabel, basePct, spanPct) {
+        const outDoc = await window.PDFLib.PDFDocument.create();
+        const total = pdfJsDoc.numPages;
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d", { alpha: false });
+
+        for (let pageNum = 1; pageNum <= total; pageNum++) {
+          progress.show(
+            basePct + ((pageNum - 1) / total) * spanPct,
+            PDFTools.t("compressProgressRender", {
+              current: pageNum,
+              total,
+              attempt: attemptLabel
+            })
+          );
+          await PDFTools.yieldToUI();
+
+          const page = await pdfJsDoc.getPage(pageNum);
+          const baseVp = page.getViewport({ scale: 1 });
+          const renderVp = page.getViewport({ scale });
+
+          canvas.width = Math.max(1, Math.floor(renderVp.width));
+          canvas.height = Math.max(1, Math.floor(renderVp.height));
+
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          await page.render({ canvasContext: ctx, viewport: renderVp }).promise;
+          const jpgBytes = await canvasToJpgBytes(canvas, quality);
+          const jpgImg = await outDoc.embedJpg(jpgBytes);
+
+          const outPage = outDoc.addPage([baseVp.width, baseVp.height]);
+          outPage.drawImage(jpgImg, {
+            x: 0,
+            y: 0,
+            width: baseVp.width,
+            height: baseVp.height
+          });
+        }
+
+        return outDoc.save({ useObjectStreams: true });
+      }
+
+      processBtn.addEventListener("click", async () => {
+        if (!currentBuffer || !currentFile) return;
+        if (!window.PDFLib || !window.pdfjsLib) {
+          PDFTools.showAlert(errorBox, PDFTools.t("errLibMissing"));
+          return;
+        }
+
+        const targetBytes = getTargetBytes();
+        if (!targetBytes) {
+          PDFTools.showAlert(errorBox, PDFTools.t("compressErrInvalidTarget"));
+          return;
+        }
+
+        resetOutput();
+        processBtn.disabled = true;
+
+        try {
+          const origBytes = new Uint8Array(currentBuffer);
+          progress.show(10, PDFTools.t("compressProgressLossless"));
+          await PDFTools.yieldToUI();
+
+          // Pass 1: lossless structural rewrite via pdf-lib
+          const srcDoc = await window.PDFLib.PDFDocument.load(currentBuffer);
+          const cleanDoc = await window.PDFLib.PDFDocument.create();
+          const copied = await cleanDoc.copyPages(srcDoc, srcDoc.getPageIndices());
+          copied.forEach((p) => cleanDoc.addPage(p));
+          const losslessBytes = await cleanDoc.save({ useObjectStreams: true });
+
+          let bestBytes = losslessBytes.length <= origBytes.length ? losslessBytes : origBytes;
+
+          if (bestBytes.length > targetBytes) {
+            const pdfJsDoc = await PDFTools.loadPdfJsDocument(currentBuffer);
+
+            const profiles = [
+              { scale: 1.35, quality: 0.78, label: "1/4" },
+              { scale: 1.0, quality: 0.58, label: "2/4" },
+              { scale: 0.75, quality: 0.42, label: "3/4" },
+              { scale: 0.55, quality: 0.28, label: "4/4" }
+            ];
+
+            // Skip higher profiles if target is very tight relative to page count
+            const startIdx = targetBytes / Math.max(1, currentPageCount) < 40 * 1024 ? 1 : 0;
+
+            for (let i = startIdx; i < profiles.length; i++) {
+              const p = profiles[i];
+              const basePct = 15 + ((i - startIdx) / (profiles.length - startIdx)) * 78;
+              const spanPct = 78 / (profiles.length - startIdx);
+              const candidate = await renderCompressedPdf(pdfJsDoc, p.scale, p.quality, p.label, basePct, spanPct);
+
+              if (candidate.length < bestBytes.length) {
+                bestBytes = candidate;
+              }
+              if (bestBytes.length <= targetBytes) {
+                break;
+              }
+            }
+
+            await pdfJsDoc.destroy();
+          }
+
+          progress.show(96, PDFTools.t("compressProgressPack"));
+          await PDFTools.yieldToUI();
+
+          outputBlob = new Blob([bestBytes], { type: "application/pdf" });
+          outputFilename = PDFTools.stripExtension(currentFile.name) + "_compressed.pdf";
+
+          progress.show(100, PDFTools.t("progressDone"));
+
+          const beforeSize = currentFile.size;
+          const afterSize = outputBlob.size;
+
+          if (afterSize < beforeSize) {
+            const pct = Math.max(1, Math.round(((beforeSize - afterSize) / beforeSize) * 100));
+            resultMeta.textContent = PDFTools.t("compressResultMeta", {
+              before: PDFTools.formatBytes(beforeSize),
+              after: PDFTools.formatBytes(afterSize),
+              percent: pct
+            });
+          } else {
+            resultMeta.textContent = PDFTools.t("compressResultBigger", {
+              before: PDFTools.formatBytes(beforeSize),
+              after: PDFTools.formatBytes(afterSize)
+            });
+          }
+
+          if (afterSize > targetBytes) {
+            PDFTools.showAlert(
+              warnBox,
+              PDFTools.t("compressWarnAboveTarget", {
+                target: PDFTools.formatBytes(targetBytes),
+                actual: PDFTools.formatBytes(afterSize)
+              })
+            );
+          }
+
+          PDFTools.showEl(resultBox);
+        } catch (err) {
+          progress.hide();
+          PDFTools.showAlert(errorBox, PDFTools.classifyPdfError(err, currentFile.name));
+        } finally {
+          processBtn.disabled = false;
+        }
+      });
+
+      downloadBtn.addEventListener("click", () => {
+        if (outputBlob) {
+          PDFTools.triggerDownload(outputBlob, outputFilename);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

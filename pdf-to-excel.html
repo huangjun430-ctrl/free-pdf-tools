@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" data-i18n-title="excelPageTitle" data-i18n-desc="excelMetaDesc">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF to Excel (.xlsx) — Free PDF Tools</title>
+  <meta name="description" content="Extract tabular text from PDF files into an Excel (.xlsx) spreadsheet locally in your browser." />
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </span>
+        <span data-i18n="siteName">Free PDF Tools</span>
+      </a>
+      <nav class="header-nav" aria-label="Tools">
+        <a class="nav-link" href="pdf-to-word.html" data-i18n="navPdfToWord">PDF to Word</a>
+        <a class="nav-link active" href="pdf-to-excel.html" data-i18n="navPdfToExcel">PDF to Excel</a>
+        <a class="nav-link" href="merge-pdf.html" data-i18n="navMergePdf">Merge PDF</a>
+        <a class="nav-link" href="compress-pdf.html" data-i18n="navCompressPdf">Compress PDF</a>
+        <a class="nav-link" href="split-pdf.html" data-i18n="navSplitPdf">Split PDF</a>
+        <a class="nav-link" href="jpg-to-pdf.html" data-i18n="navJpgToPdf">JPG to PDF</a>
+      </nav>
+      <button type="button" id="langToggleBtn" class="lang-btn" data-i18n="langToggle">中文</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tool-container">
+      <div class="breadcrumb">
+        <a href="index.html" data-i18n="backHome">← Back to all tools</a>
+      </div>
+
+      <section class="tool-header">
+        <h1 data-i18n="excelTitle">PDF to Excel</h1>
+        <p data-i18n="excelDesc">Extract rows and columns from text-based PDFs into an .xlsx Excel spreadsheet.</p>
+      </section>
+
+      <section class="workspace-card">
+        <div id="dropzone" class="dropzone" tabindex="0" role="button">
+          <div class="dropzone-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="dropzone-title" data-i18n="dropTitleSingle">Drag &amp; drop a file here, or click to select</p>
+          <p class="dropzone-hint" data-i18n="dropHintPdf">Supports .pdf files (up to 50 MB recommended for smooth browser processing)</p>
+          <button type="button" id="browseBtn" class="btn btn-secondary" data-i18n="chooseFileBtn">Select File</button>
+          <input type="file" id="fileInput" class="file-input-hidden" accept=".pdf,application/pdf" />
+        </div>
+
+        <div id="fileSummary" class="file-summary hidden">
+          <div class="file-summary-meta">
+            <div id="fileName" class="file-summary-name"></div>
+            <div id="fileMeta" class="file-summary-sub"></div>
+          </div>
+          <button type="button" id="clearBtn" class="btn btn-secondary btn-sm" data-i18n="clearBtn">Clear</button>
+        </div>
+
+        <div class="options-panel">
+          <h2 class="options-title" data-i18n="optionsTitle">Options</h2>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label" for="optSheetMode" data-i18n="excelOptSheetMode">Worksheet mode</label>
+              <select id="optSheetMode" class="form-select">
+                <option value="perPage" data-i18n="excelOptPerPage">One sheet per PDF page (Sheet1, Sheet2...)</option>
+                <option value="single" data-i18n="excelOptSingleSheet">Merge all pages into one sheet</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="optSensitivity" data-i18n="excelOptGapSensitivity">Column split sensitivity</label>
+              <select id="optSensitivity" class="form-select">
+                <option value="auto" data-i18n="excelOptAuto">Standard (automatic gap detection)</option>
+                <option value="tight" data-i18n="excelOptTight">Fine (for dense tables)</option>
+                <option value="loose" data-i18n="excelOptLoose">Loose (fewer splits)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-area">
+          <button type="button" id="processBtn" class="btn btn-primary btn-lg" disabled data-i18n="excelBtn">Convert to Excel</button>
+        </div>
+
+        <div id="progressWrap" class="progress-wrap hidden">
+          <div class="progress-header">
+            <span id="progressText" data-i18n="progressWorking">Processing...</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div id="errorBox" class="alert alert-error hidden" role="alert"></div>
+
+        <div id="resultBox" class="result-box hidden">
+          <h2 class="result-title" data-i18n="resultTitle">Ready to Download</h2>
+          <p id="resultMeta" class="result-meta"></p>
+          <div class="result-actions">
+            <button type="button" id="downloadBtn" class="btn btn-success" data-i18n="excelDownloadBtn">Download Excel (.xlsx)</button>
+          </div>
+          <div id="previewBox" class="preview-box hidden">
+            <table id="previewTable" class="preview-table"></table>
+          </div>
+        </div>
+
+        <div class="local-notice" data-i18n="localNotice">🔒 Files are processed locally in your browser and are never uploaded to any server.</div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span data-i18n="footerPromise">🔒 Privacy Promise: All files are processed locally in your browser and never leave your device.</span>
+      <span data-i18n="footerNote">Pure static site · Zero uploads · Zero tracking</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="assets/i18n.js"></script>
+  <script src="assets/main.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      const dropzone = document.getElementById("dropzone");
+      const fileInput = document.getElementById("fileInput");
+      const browseBtn = document.getElementById("browseBtn");
+      const fileSummary = document.getElementById("fileSummary");
+      const fileNameEl = document.getElementById("fileName");
+      const fileMetaEl = document.getElementById("fileMeta");
+      const clearBtn = document.getElementById("clearBtn");
+      const optSheetMode = document.getElementById("optSheetMode");
+      const optSensitivity = document.getElementById("optSensitivity");
+      const processBtn = document.getElementById("processBtn");
+      const progress = PDFTools.createProgressUI(
+        document.getElementById("progressWrap"),
+        document.getElementById("progressFill"),
+        document.getElementById("progressText"),
+        document.getElementById("progressPct")
+      );
+      const errorBox = document.getElementById("errorBox");
+      const resultBox = document.getElementById("resultBox");
+      const resultMeta = document.getElementById("resultMeta");
+      const downloadBtn = document.getElementById("downloadBtn");
+      const previewBox = document.getElementById("previewBox");
+      const previewTable = document.getElementById("previewTable");
+
+      let currentFile = null;
+      let currentBuffer = null;
+      let currentPageCount = 0;
+      let outputBlob = null;
+      let outputFilename = "converted.xlsx";
+
+      function resetOutput() {
+        outputBlob = null;
+        PDFTools.hideEl(errorBox);
+        PDFTools.hideEl(resultBox);
+        PDFTools.hideEl(previewBox);
+        progress.hide();
+      }
+
+      function clearSelection() {
+        currentFile = null;
+        currentBuffer = null;
+        currentPageCount = 0;
+        PDFTools.hideEl(fileSummary);
+        processBtn.disabled = true;
+        resetOutput();
+      }
+
+      function updateFileMeta() {
+        if (!currentFile) return;
+        fileMetaEl.textContent = PDFTools.t("fileInfoPages", {
+          pages: currentPageCount,
+          size: PDFTools.formatBytes(currentFile.size)
+        });
+      }
+
+      PDFToolsI18n.onChange(updateFileMeta);
+
+      PDFTools.setupDropzone({
+        dropzone,
+        input: fileInput,
+        browseBtn,
+        multiple: false,
+        acceptType: "pdf",
+        onError(msg) {
+          resetOutput();
+          PDFTools.showAlert(errorBox, msg);
+        },
+        async onFiles(files) {
+          resetOutput();
+          const file = files[0];
+          try {
+            const buffer = await PDFTools.readFileAsArrayBuffer(file);
+            const pdfDoc = await PDFTools.loadPdfJsDocument(buffer);
+            currentFile = file;
+            currentBuffer = buffer;
+            currentPageCount = pdfDoc.numPages;
+            await pdfDoc.destroy();
+
+            fileNameEl.textContent = file.name;
+            updateFileMeta();
+            PDFTools.showEl(fileSummary);
+            processBtn.disabled = false;
+          } catch (err) {
+            clearSelection();
+            PDFTools.showAlert(errorBox, PDFTools.classifyPdfError(err, file.name));
+          }
+        }
+      });
+
+      clearBtn.addEventListener("click", clearSelection);
+
+      function extractRowsFromPage(textContent, sensitivity) {
+        const items = (textContent.items || [])
+          .filter((it) => it && typeof it.str === "string" && it.str.trim().length > 0)
+          .map((it) => {
+            const tr = it.transform || [1, 0, 0, 11, 0, 0];
+            const fontSize = Math.max(Math.abs(tr[0]) || 0, Math.abs(tr[3]) || 0, it.height || 11);
+            return {
+              str: it.str.trim(),
+              x: tr[4],
+              y: tr[5],
+              width: it.width || 0,
+              fontSize
+            };
+          });
+
+        if (!items.length) return [];
+
+        items.sort((a, b) => {
+          if (Math.abs(b.y - a.y) > 2) return b.y - a.y;
+          return a.x - b.x;
+        });
+
+        const rowBuckets = [];
+        for (const item of items) {
+          const yTol = Math.max(3, item.fontSize * 0.45);
+          let bucket = null;
+          for (let i = rowBuckets.length - 1; i >= Math.max(0, rowBuckets.length - 6); i--) {
+            if (Math.abs(rowBuckets[i].y - item.y) <= yTol) {
+              bucket = rowBuckets[i];
+              break;
+            }
+          }
+          if (!bucket) {
+            rowBuckets.push({ y: item.y, items: [item] });
+          } else {
+            bucket.items.push(item);
+          }
+        }
+
+        rowBuckets.sort((a, b) => b.y - a.y);
+
+        const gapFactor = sensitivity === "tight" ? 0.35 : sensitivity === "loose" ? 1.15 : 0.65;
+        const colAlignTol = sensitivity === "tight" ? 10 : sensitivity === "loose" ? 24 : 16;
+
+        // Merge adjacent fragments on the same row into cell tokens
+        const tokenizedRows = rowBuckets.map((row) => {
+          row.items.sort((a, b) => a.x - b.x);
+          const cells = [];
+          for (const it of row.items) {
+            const prev = cells[cells.length - 1];
+            if (prev && it.x - prev.endX <= Math.max(4, it.fontSize * gapFactor)) {
+              prev.text += " " + it.str;
+              prev.endX = Math.max(prev.endX, it.x + it.width);
+            } else {
+              cells.push({
+                x: it.x,
+                endX: it.x + it.width,
+                text: it.str
+              });
+            }
+          }
+          return cells;
+        });
+
+        // Cluster X positions across all rows to align table columns cleanly
+        const allXs = [];
+        tokenizedRows.forEach((r) => r.forEach((c) => allXs.push(c.x)));
+        allXs.sort((a, b) => a - b);
+
+        const colAnchors = [];
+        for (const x of allXs) {
+          const last = colAnchors[colAnchors.length - 1];
+          if (last === undefined || x - last > colAlignTol) {
+            colAnchors.push(x);
+          }
+        }
+
+        return tokenizedRows.map((cells) => {
+          const rowArr = new Array(colAnchors.length).fill("");
+          for (const cell of cells) {
+            let bestIdx = 0;
+            let bestDist = Infinity;
+            for (let i = 0; i < colAnchors.length; i++) {
+              const d = Math.abs(cell.x - colAnchors[i]);
+              if (d < bestDist) {
+                bestDist = d;
+                bestIdx = i;
+              }
+            }
+            rowArr[bestIdx] = rowArr[bestIdx] ? rowArr[bestIdx] + " " + cell.text : cell.text;
+          }
+          // Trim trailing empty cells
+          while (rowArr.length > 0 && rowArr[rowArr.length - 1] === "") {
+            rowArr.pop();
+          }
+          return rowArr;
+        }).filter((r) => r.some((v) => v !== ""));
+      }
+
+      function renderTablePreview(rows) {
+        previewTable.innerHTML = "";
+        const sample = rows.slice(0, 12);
+        const maxCols = sample.reduce((m, r) => Math.max(m, r.length), 0);
+        sample.forEach((row, idx) => {
+          const tr = document.createElement("tr");
+          for (let c = 0; c < maxCols; c++) {
+            const cell = document.createElement(idx === 0 ? "th" : "td");
+            cell.textContent = row[c] || "";
+            tr.appendChild(cell);
+          }
+          previewTable.appendChild(tr);
+        });
+      }
+
+      processBtn.addEventListener("click", async () => {
+        if (!currentBuffer || !currentFile) return;
+        if (!window.XLSX || !window.pdfjsLib) {
+          PDFTools.showAlert(errorBox, PDFTools.t("errLibMissing"));
+          return;
+        }
+
+        resetOutput();
+        processBtn.disabled = true;
+
+        try {
+          const pdfDoc = await PDFTools.loadPdfJsDocument(currentBuffer);
+          const total = pdfDoc.numPages;
+          const sensitivity = optSensitivity.value;
+          const sheetMode = optSheetMode.value;
+          const pageRowsList = [];
+          let totalRows = 0;
+
+          for (let pageNum = 1; pageNum <= total; pageNum++) {
+            progress.show((pageNum / total) * 80, PDFTools.t("excelProgressPage", { current: pageNum, total }));
+            await PDFTools.yieldToUI();
+
+            const page = await pdfDoc.getPage(pageNum);
+            const content = await page.getTextContent();
+            const rows = extractRowsFromPage(content, sensitivity);
+            totalRows += rows.length;
+            pageRowsList.push({ pageNum, rows });
+          }
+
+          await pdfDoc.destroy();
+
+          if (totalRows === 0) {
+            progress.hide();
+            PDFTools.showAlert(errorBox, PDFTools.t("errNoTextScanned"));
+            processBtn.disabled = false;
+            return;
+          }
+
+          progress.show(90, PDFTools.t("excelProgressBuild"));
+          await PDFTools.yieldToUI();
+
+          const wb = window.XLSX.utils.book_new();
+          let sheetCount = 0;
+          let previewSource = [];
+
+          if (sheetMode === "single") {
+            const combined = [];
+            pageRowsList.forEach(({ rows }) => {
+              combined.push(...rows);
+            });
+            const ws = window.XLSX.utils.aoa_to_sheet(combined);
+            window.XLSX.utils.book_append_sheet(wb, ws, "AllPages");
+            sheetCount = 1;
+            previewSource = combined;
+          } else {
+            pageRowsList.forEach(({ pageNum, rows }) => {
+              if (!rows.length) return;
+              const ws = window.XLSX.utils.aoa_to_sheet(rows);
+              window.XLSX.utils.book_append_sheet(wb, ws, "Page_" + pageNum);
+              sheetCount++;
+              if (!previewSource.length) previewSource = rows;
+            });
+          }
+
+          const xlsxBytes = window.XLSX.write(wb, { bookType: "xlsx", type: "array" });
+          outputBlob = new Blob([xlsxBytes], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          });
+          outputFilename = PDFTools.stripExtension(currentFile.name) + ".xlsx";
+
+          progress.show(100, PDFTools.t("progressDone"));
+          resultMeta.textContent = PDFTools.t("excelResultMeta", {
+            sheets: sheetCount,
+            rows: totalRows
+          });
+
+          if (previewSource.length) {
+            renderTablePreview(previewSource);
+            PDFTools.showEl(previewBox);
+          }
+          PDFTools.showEl(resultBox);
+        } catch (err) {
+          progress.hide();
+          PDFTools.showAlert(errorBox, PDFTools.classifyPdfError(err, currentFile.name));
+        } finally {
+          processBtn.disabled = false;
+        }
+      });
+
+      downloadBtn.addEventListener("click", () => {
+        if (outputBlob) {
+          PDFTools.triggerDownload(outputBlob, outputFilename);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
