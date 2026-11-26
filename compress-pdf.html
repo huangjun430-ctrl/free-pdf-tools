@@ -5,6 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Compress PDF — Free PDF Tools</title>
   <meta name="description" content="Compress PDF files locally in your browser with target size presets (100KB, 500KB, 1MB, or custom)." />
+  <link rel="canonical" href="https://huangjun430-ctrl.github.io/free-pdf-tools/compress-pdf.html" />
+  <meta property="og:title" content="Compress PDF — Free PDF Tools" />
+  <meta property="og:description" content="Compress PDF files locally in your browser with target size presets (100KB, 500KB, 1MB, or custom)." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://huangjun430-ctrl.github.io/free-pdf-tools/compress-pdf.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can it compress a PDF down to 100KB?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, you can pick 100 KB, 500 KB, 1 MB, or a custom target in KB (minimum 20 KB). If lossless optimization alone is still above your target, the tool progressively downsamples pages as JPEG images to reach it—though very large multi-page PDFs may stay above 100 KB to remain readable."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will compressing my PDF reduce image or text quality?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Lossless structural optimization runs first with zero quality loss. If the file still exceeds your target size, pages are re-encoded as compressed JPEG images—the smaller the target size you choose, the lower the image quality and resolution."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens if my PDF is already smaller or heavily compressed?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If the compressed result is not smaller than the original file, the tool keeps and outputs the smaller version so your file never gets larger."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is PDF compression done locally?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, it is completely local. All compression takes place in your browser with no server uploads and no sign-up."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
@@ -113,6 +158,28 @@
         </div>
 
         <div class="local-notice" data-i18n="localNotice">🔒 Files are processed locally in your browser and are never uploaded to any server.</div>
+      </section>
+
+      <section class="faq-section" aria-labelledby="faqHeading">
+        <h2 id="faqHeading" class="faq-heading" data-i18n="faqHeading">Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="compressFaqQ1">Can it compress a PDF down to 100KB?</h3>
+            <p class="faq-answer" data-i18n="compressFaqA1">Yes, you can pick 100 KB, 500 KB, 1 MB, or a custom target in KB (minimum 20 KB). If lossless optimization alone is still above your target, the tool progressively downsamples pages as JPEG images to reach it—though very large multi-page PDFs may stay above 100 KB to remain readable.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="compressFaqQ2">Will compressing my PDF reduce image or text quality?</h3>
+            <p class="faq-answer" data-i18n="compressFaqA2">Lossless structural optimization runs first with zero quality loss. If the file still exceeds your target size, pages are re-encoded as compressed JPEG images—the smaller the target size you choose, the lower the image quality and resolution.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="compressFaqQ3">What happens if my PDF is already smaller or heavily compressed?</h3>
+            <p class="faq-answer" data-i18n="compressFaqA3">If the compressed result is not smaller than the original file, the tool keeps and outputs the smaller version so your file never gets larger.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="compressFaqQ4">Is PDF compression done locally?</h3>
+            <p class="faq-answer" data-i18n="compressFaqA4">Yes, it is completely local. All compression takes place in your browser with no server uploads and no sign-up.</p>
+          </div>
+        </div>
       </section>
     </div>
   </main>

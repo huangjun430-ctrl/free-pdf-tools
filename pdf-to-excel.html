@@ -5,6 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PDF to Excel (.xlsx) — Free PDF Tools</title>
   <meta name="description" content="Extract tabular text from PDF files into an Excel (.xlsx) spreadsheet locally in your browser." />
+  <link rel="canonical" href="https://huangjun430-ctrl.github.io/free-pdf-tools/pdf-to-excel.html" />
+  <meta property="og:title" content="PDF to Excel (.xlsx) — Free PDF Tools" />
+  <meta property="og:description" content="Extract tabular text from PDF files into an Excel (.xlsx) spreadsheet locally in your browser." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://huangjun430-ctrl.github.io/free-pdf-tools/pdf-to-excel.html" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Can it restore tables from a PDF into Excel?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For text-based PDFs, yes—it analyzes text coordinates to group rows and align columns into an .xlsx spreadsheet, and offers standard, fine, and loose column split sensitivity."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does each PDF page become its own sheet or merge into one sheet?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can choose either mode before converting: export one worksheet per PDF page (Page_1, Page_2...) or merge all pages into a single sheet."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it work on scanned PDF tables?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Only text-based PDFs with selectable text are supported; scanned images without embedded text cannot be parsed into spreadsheet cells."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I preview the extracted table before downloading?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. After conversion finishes, a preview of the extracted rows and columns appears right below the download button."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
@@ -114,6 +159,28 @@
         </div>
 
         <div class="local-notice" data-i18n="localNotice">🔒 Files are processed locally in your browser and are never uploaded to any server.</div>
+      </section>
+
+      <section class="faq-section" aria-labelledby="faqHeading">
+        <h2 id="faqHeading" class="faq-heading" data-i18n="faqHeading">Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="excelFaqQ1">Can it restore tables from a PDF into Excel?</h3>
+            <p class="faq-answer" data-i18n="excelFaqA1">For text-based PDFs, yes—it analyzes text coordinates to group rows and align columns into an .xlsx spreadsheet, and offers standard, fine, and loose column split sensitivity.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="excelFaqQ2">Does each PDF page become its own sheet or merge into one sheet?</h3>
+            <p class="faq-answer" data-i18n="excelFaqA2">You can choose either mode before converting: export one worksheet per PDF page (Page_1, Page_2...) or merge all pages into a single sheet.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="excelFaqQ3">Does it work on scanned PDF tables?</h3>
+            <p class="faq-answer" data-i18n="excelFaqA3">No. Only text-based PDFs with selectable text are supported; scanned images without embedded text cannot be parsed into spreadsheet cells.</p>
+          </div>
+          <div class="faq-item">
+            <h3 class="faq-question" data-i18n="excelFaqQ4">Can I preview the extracted table before downloading?</h3>
+            <p class="faq-answer" data-i18n="excelFaqA4">Yes. After conversion finishes, a preview of the extracted rows and columns appears right below the download button.</p>
+          </div>
+        </div>
       </section>
     </div>
   </main>
